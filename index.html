@@ -3,34 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You Got This 💖</title>
   <link rel="manifest" href="manifest.json" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>You Got This 💪</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    .fade-in {
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
-
-<!-- Name Prompt Modal -->
-<div id="nameModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden">
-  <div class="bg-white p-6 rounded shadow-xl w-80 space-y-4 text-center">
-    <h2 class="text-xl font-semibold">Welcome 💖</h2>
-    <p class="text-sm text-gray-600">What’s your name?</p>
-    <input type="text" id="nameInput" placeholder="Enter your name"
-           class="w-full border p-2 rounded" />
-    <button id="saveName"
-            class="w-full bg-pink-500 text-white py-2 rounded mt-2">
-      Save
-    </button>
-  </div>
-</div>
-
-
 <body class="bg-pink-50 text-gray-800 p-4">
 
   <div class="max-w-md mx-auto bg-white rounded-xl shadow-md p-6 space-y-6">
     <h1 id="title" class="text-2xl font-bold text-center">You Got This 💖</h1>
 
-    <section id="quote" class="italic text-center text-lg text-gray-600">
-      <p>Loading quote...</p>
-    </section>
+    <!-- Quote Carousel -->
+    <div id="quoteBox" class="text-center text-lg italic text-pink-700 px-4 py-2 fade-in">
+      Loading quote...
+    </div>
 
     <section id="tracker" class="space-y-2">
       <h2 class="font-semibold">Weekly Tracker</h2>

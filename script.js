@@ -6,16 +6,19 @@ const LoveNotes = [
   "This app isn’t perfect — but it’s made with love for someone who is."
 ];
 
+const quotes = [
+  "Progress, not perfection 💪",
+  "You are becoming stronger every day 💖",
+  "Trust the process, it's working ✨",
+  "Be proud of yourself today 🌸",
+  "You’re doing better than you think 💫",
+];
+
 function loadName() {
   const modal = document.getElementById("nameModal");
-  if (!modal) {
-    console.error("Modal not found in DOM.");
-    return;
-  }
-
   const herName = localStorage.getItem("herName");
+
   if (!herName) {
-    console.log("No name found – showing modal.");
     modal.classList.remove("hidden");
     document.getElementById("saveName").addEventListener("click", () => {
       const name = document.getElementById("nameInput").value.trim();
@@ -26,37 +29,27 @@ function loadName() {
       }
     });
   } else {
-    console.log("Name already saved – hiding modal.");
     modal.classList.add("hidden");
     document.getElementById("title").textContent = `You Got This, ${herName} 💖`;
   }
 }
 
+function rotateQuotes() {
+  const box = document.getElementById("quoteBox");
+  let quoteIndex = 0;
+  box.textContent = quotes[quoteIndex];
 
-async function loadQuote() {
-  const stored = JSON.parse(localStorage.getItem('todayQuote') || '{}');
-  const today = new Date().toISOString().slice(0,10);
-
-  if (stored.date === today) {
-    setQuote(stored.quote, stored.author);
-  } else {
-    try {
-      const res = await fetch('https://api.quotable.io/random?tags=motivational|inspirational');
-      const data = await res.json();
-      setQuote(data.content, data.author);
-      localStorage.setItem('todayQuote', JSON.stringify({
-        date: today,
-        quote: data.content,
-        author: data.author
-      }));
-    } catch {
-      setQuote("You are capable of amazing things.", "");
-    }
-  }
+  setInterval(() => {
+    quoteIndex = (quoteIndex + 1) % quotes.length;
+    box.classList.remove("fade-in");
+    void box.offsetWidth; // force reflow
+    box.textContent = quotes[quoteIndex];
+    box.classList.add("fade-in");
+  }, 6000);
 }
 
-function setQuote(q, a) {
-  document.querySelector('#quote p').textContent = a ? `"${q}" — ${a}` : q;
+function loadQuote() {
+  // deprecated - carousel used now
 }
 
 function loadLoveNote() {
@@ -92,6 +85,11 @@ function saveEntry() {
   localStorage.setItem('entries', JSON.stringify(data));
   document.getElementById('entryInput').value = '';
   renderEntries();
+
+  if (shouldShowConfetti()) {
+    launchConfetti();
+    markConfettiShown();
+  }
 }
 
 function renderEntries() {
@@ -105,9 +103,37 @@ function renderEntries() {
   });
 }
 
+// Confetti celebration
+function shouldShowConfetti() {
+  const lastShown = localStorage.getItem("confettiShownDate");
+  const today = new Date().toISOString().split("T")[0];
+  return lastShown !== today;
+}
+
+function markConfettiShown() {
+  const today = new Date().toISOString().split("T")[0];
+  localStorage.setItem("confettiShownDate", today);
+}
+
+function launchConfetti() {
+  const duration = 2 * 1000;
+  const end = Date.now() + duration;
+
+  const frame = () => {
+    if (Date.now() > end) return;
+    confetti({
+      particleCount: 30,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+    requestAnimationFrame(frame);
+  };
+  frame();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadName();
-  loadQuote();
+  rotateQuotes();
   loadLoveNote();
   renderEntries();
 });
