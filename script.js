@@ -1,66 +1,154 @@
-const LoveNotes = [
-  "Just a reminder: I'm in your corner, always.",
-  "No matter the progress — you’re already beautiful to me.",
-  "You’re doing better than you think, I’m so proud of you ❤️",
-  "The effort you put in every day makes me love you even more.",
-  "This app isn’t perfect — but it’s made with love for someone who is."
-];
+function getToday() {
+  return new Date().toISOString().split('T')[0];
+}
 
-const quotes = [
-  "Progress, not perfection 💪",
-  "You are becoming stronger every day 💖",
-  "Trust the process, it's working ✨",
-  "Be proud of yourself today 🌸",
-  "You’re doing better than you think 💫",
-];
+function saveEntry() {
+  const moodVal = document.getElementById('moodInput').value.trim();
+  const weightVal = document.getElementById('weightInput').value.trim();
+  const today = getToday();
 
-// 🎉 Confetti
+  if (!moodVal) {
+    alert("Mood is required.");
+    return;
+  }
+
+  const mood = parseInt(moodVal);
+  if (mood < 1 || mood > 10) {
+    alert("Mood must be between 1 and 10 🧠");
+    return;
+  }
+
+  // Save mood
+  const moods = JSON.parse(localStorage.getItem('moodEntries') || '{}');
+  moods[`mood_${today}`] = mood;
+  localStorage.setItem('moodEntries', JSON.stringify(moods));
+
+  // Confetti once per day
+  if (shouldShowConfetti()) {
+    launchConfetti();
+    markConfettiShown();
+  }
+
+  // Save weight if entered
+  if (weightVal) {
+    const weight = parseFloat(weightVal);
+    if (!isNaN(weight)) {
+      const weights = JSON.parse(localStorage.getItem('weightEntries') || '{}');
+      weights[`weight_${today}`] = weight;
+      localStorage.setItem('weightEntries', JSON.stringify(weights));
+    }
+  }
+
+  // Save checklist
+  const checklistStates = Array.from(document.querySelectorAll('#checklist input[type="checkbox"]')).map(cb => cb.checked);
+  localStorage.setItem(`checklist_${today}`, JSON.stringify(checklistStates));
+
+  document.getElementById('moodInput').value = '';
+  document.getElementById('weightInput').value = '';
+
+  renderEntries();
+}
+
+function renderEntries() {
+  const list = document.getElementById('entriesList');
+  list.innerHTML = '';
+
+  const moodData = JSON.parse(localStorage.getItem('moodEntries') || '{}');
+  const weightData = JSON.parse(localStorage.getItem('weightEntries') || '{}');
+
+  const allDates = new Set([
+    ...Object.keys(moodData).map(k => k.replace('mood_', '')),
+    ...Object.keys(weightData).map(k => k.replace('weight_', ''))
+  ]);
+
+  const moodEmoji = (m) => {
+    if (m >= 9) return '😄';
+    if (m >= 7) return '😊';
+    if (m >= 5) return '😐';
+    if (m >= 3) return '😞';
+    return '😢';
+  };
+
+  [...allDates].sort().reverse().forEach(date => {
+    const mood = moodData[`mood_${date}`];
+    const weight = weightData[`weight_${date}`];
+
+    if (mood !== undefined) {
+      const liMood = document.createElement('li');
+      liMood.textContent = `${date} - ${moodEmoji(mood)} Mood: ${mood}/10`;
+      list.appendChild(liMood);
+    }
+
+    if (weight !== undefined) {
+      const liWeight = document.createElement('li');
+      liWeight.textContent = `${date} - ⚖️ Weight: ${weight} kg`;
+      list.appendChild(liWeight);
+    }
+  });
+}
+
 function shouldShowConfetti() {
-  const lastShown = localStorage.getItem("confettiShownDate");
-  const today = new Date().toISOString().split("T")[0];
-  return lastShown !== today;
+  return localStorage.getItem("confettiShown") !== getToday();
 }
-
 function markConfettiShown() {
-  const today = new Date().toISOString().split("T")[0];
-  localStorage.setItem("confettiShownDate", today);
+  localStorage.setItem("confettiShown", getToday());
 }
-
 function launchConfetti() {
-  const duration = 2000;
-  const end = Date.now() + duration;
-
+  const end = Date.now() + 1500;
   (function frame() {
-    if (Date.now() > end) return;
-    confetti({
-      particleCount: 30,
-      spread: 60,
-      origin: { y: 0.6 }
-    });
-    requestAnimationFrame(frame);
+    confetti({ particleCount: 20, spread: 70, origin: { y: 0.6 } });
+    if (Date.now() < end) requestAnimationFrame(frame);
   })();
 }
 
-// 💬 Quote Rotator
 function rotateQuotes() {
+  const quotes = [
+    "Progress, not perfection 💪",
+    "You are becoming stronger every day 💖",
+    "Trust the process, it's working ✨",
+    "Be proud of yourself today 🌸",
+    "You’re doing better than you think 💫",
+  ];
   const box = document.getElementById("quoteBox");
-  let quoteIndex = 0;
-  box.textContent = quotes[quoteIndex];
-
+  let i = 0;
+  box.textContent = quotes[i];
   setInterval(() => {
-    quoteIndex = (quoteIndex + 1) % quotes.length;
-    box.classList.remove("fade-in");
-    void box.offsetWidth;
-    box.textContent = quotes[quoteIndex];
-    box.classList.add("fade-in");
+    i = (i + 1) % quotes.length;
+    box.textContent = quotes[i];
   }, 6000);
 }
 
-// 💖 Name Modal
+function loadLoveNote() {
+  const notes = [
+    "I believe in you — always.",
+    "You’re already beautiful to me.",
+    "Each small step is a win ❤️",
+    "Made with love, for someone who deserves it."
+  ];
+  const today = getToday();
+  const stored = JSON.parse(localStorage.getItem('todayNote') || '{}');
+  if (stored.date === today) {
+    showNote(stored.note);
+  } else {
+    const note = notes[Math.floor(Math.random() * notes.length)];
+    localStorage.setItem('todayNote', JSON.stringify({ date: today, note }));
+    showNote(note);
+  }
+}
+function showNote(note) {
+  document.querySelector('#message p').textContent = note;
+}
+
+function loadChecklist() {
+  const today = getToday();
+  const states = JSON.parse(localStorage.getItem(`checklist_${today}`) || '[]');
+  const checkboxes = document.querySelectorAll('#checklist input[type="checkbox"]');
+  checkboxes.forEach((cb, i) => cb.checked = states[i] || false);
+}
+
 function loadName() {
   const modal = document.getElementById("nameModal");
   const herName = localStorage.getItem("herName");
-
   if (!herName) {
     modal.classList.remove("hidden");
     document.getElementById("saveName").addEventListener("click", () => {
@@ -72,100 +160,16 @@ function loadName() {
       }
     });
   } else {
-    modal.classList.add("hidden");
     document.getElementById("title").textContent = `You Got This, ${herName} 💖`;
   }
 }
 
-// 📅 Week Calculation
-function getWeekNumber(d) {
-  const z = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  const dayNum = z.getUTCDay() || 7;
-  z.setUTCDate(z.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(z.getUTCFullYear(),0,1));
-  return Math.ceil((((z - yearStart) / 86400000) + 1)/7);
-}
-
-// ✅ Entry Save Logic
-function saveEntry() {
-  const val = document.getElementById('entryInput').value;
-  if (!val) return;
-  const week = 'Wk ' + getWeekNumber(new Date());
-  let data = JSON.parse(localStorage.getItem('entries') || '{}');
-  data[week] = val;
-  localStorage.setItem('entries', JSON.stringify(data));
-  document.getElementById('entryInput').value = '';
-  renderEntries();
-
-  if (shouldShowConfetti()) {
-    launchConfetti();
-    markConfettiShown();
-  }
-}
-
-// 📋 Render Saved Entries
-function renderEntries() {
-  const list = document.getElementById('entriesList');
-  const data = JSON.parse(localStorage.getItem('entries') || '{}');
-  list.innerHTML = '';
-  Object.entries(data).forEach(([week, val]) => {
-    const li = document.createElement('li');
-    li.textContent = `${week}: ${val}`;
-    list.appendChild(li);
-  });
-}
-
-// 💌 Daily Note
-function loadLoveNote() {
-  const stored = JSON.parse(localStorage.getItem('todayNote') || '{}');
-  const today = new Date().toISOString().slice(0,10);
-  if (stored.date === today) {
-    showNote(stored.note);
-  } else {
-    const note = LoveNotes[Math.floor(Math.random() * LoveNotes.length)];
-    localStorage.setItem('todayNote', JSON.stringify({date:today, note}));
-    showNote(note);
-  }
-}
-
-function showNote(note) {
-  document.querySelector('#message p').textContent = note;
-}
-
-// ✅ Checklist Save/Load
-function getTodayKey() {
-  return 'checklist_' + new Date().toISOString().split('T')[0];
-}
-
-function saveChecklist() {
-  const checkboxes = document.querySelectorAll('#checklist input[type="checkbox"]');
-  const states = Array.from(checkboxes).map(cb => cb.checked);
-  localStorage.setItem(getTodayKey(), JSON.stringify(states));
-}
-
-function loadChecklist() {
-  const data = JSON.parse(localStorage.getItem(getTodayKey()) || '[]');
-  const checkboxes = document.querySelectorAll('#checklist input[type="checkbox"]');
-  checkboxes.forEach((cb, i) => {
-    cb.checked = data[i] || false;
-  });
-}
-
-// 🚀 INIT
 document.addEventListener('DOMContentLoaded', () => {
   loadName();
   rotateQuotes();
   loadLoveNote();
   renderEntries();
-  loadChecklist(); // ✅ load saved checklist
+  loadChecklist();
 
-  const btn = document.getElementById('saveEntry');
-  if (btn) {
-    btn.addEventListener('click', saveEntry);
-  }
-
-  // ✅ Track changes to checklist
-  document.querySelectorAll('#checklist input[type="checkbox"]').forEach(cb => {
-    cb.addEventListener('change', saveChecklist);
-  });
+  document.getElementById('saveEntry').addEventListener('click', saveEntry);
 });

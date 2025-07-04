@@ -2,72 +2,62 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>You Got This 💖</title>
-  <link rel="manifest" href="manifest.json" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <style>
-    .fade-in {
-      animation: fadeIn 0.6s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <script defer src="script.js"></script>
 </head>
-<body class="bg-pink-50 text-gray-800 p-4">
-
-  <div class="max-w-md mx-auto bg-white rounded-xl shadow-md p-6 space-y-6">
-    <h1 id="title" class="text-2xl font-bold text-center">You Got This 💖</h1>
-
+<body class="bg-pink-50 text-gray-800 font-sans flex items-center justify-center min-h-screen">
+  <div class="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
+    
+    <!-- Personalized Title -->
+    <h1 id="title" class="text-2xl font-bold text-center mb-2">You Got This 💖</h1>
+    
     <!-- Quote Carousel -->
-    <div id="quoteBox" class="text-center text-lg italic text-pink-700 px-4 py-2 fade-in">
-      Loading quote...
+    <p id="quoteBox" class="italic text-center text-gray-500 mb-4">Loading quote...</p>
+
+    <!-- Daily Surprise Note -->
+    <div id="message" class="mb-4 p-3 bg-pink-100 rounded text-center text-sm font-medium text-pink-800">
+      <p>Loading today's surprise note...</p>
     </div>
 
-    <section id="tracker" class="space-y-2">
-      <h2 class="font-semibold">Weekly Tracker</h2>
-      <input id="entryInput" type="number" placeholder="Weight (kg) or Mood (1–10)"
-             class="w-full p-2 border rounded" />
-      <button id="saveEntry"
-              class="w-full bg-pink-500 text-white p-2 rounded">
-        Save Entry
-      </button>
-      <ul id="entriesList" class="list-disc ml-5 space-y-1"></ul>
-    </section>
+    <!-- Mood & Weight Input -->
+    <h2 class="font-semibold text-lg mb-1">Daily Tracker</h2>
+    <div class="flex gap-2 mb-2">
+      <input type="number" id="moodInput" min="1" max="10" placeholder="Mood (1–10)" class="border px-2 py-1 rounded flex-1">
+      <input type="number" id="weightInput" placeholder="Weight (optional)" class="border px-2 py-1 rounded flex-1">
+    </div>
 
-    <section id="checklist" class="space-y-2">
-      <h2 class="font-semibold">Today's Checklist</h2>
-      <ul class="list-none space-y-1">
-        <li><label><input type="checkbox"> Drink 2 L Water</label></li>
-        <li><label><input type="checkbox"> Walk 30 min</label></li>
-        <li><label><input type="checkbox"> 8 hr Sleep</label></li>
-        <li><label><input type="checkbox"> Healthy Meals</label></li>
-      </ul>
-    </section>
+    <!-- Checklist -->
+    <h2 class="font-semibold text-lg mb-2">Today's Checklist</h2>
+    <div id="checklist" class="mb-4 space-y-2">
+      <label class="block"><input type="checkbox" /> Drink 2 L Water</label>
+      <label class="block"><input type="checkbox" /> Walk 30 min</label>
+      <label class="block"><input type="checkbox" /> 8 hr Sleep</label>
+      <label class="block"><input type="checkbox" /> Healthy Meals</label>
+    </div>
 
-    <section id="message" class="p-4 bg-pink-100 rounded text-center font-semibold text-lg">
-      <p>Loading note...</p>
-    </section>
-  </div>
+    <!-- Save Button -->
+    <button id="saveEntry" class="bg-pink-500 text-white w-full py-2 rounded hover:bg-pink-600 mb-4">Save Entry</button>
 
-  <!-- Name Prompt Modal -->
-  <div id="nameModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden">
-    <div class="bg-white p-6 rounded shadow-xl w-80 space-y-4 text-center">
-      <h2 class="text-xl font-semibold">Welcome 💖</h2>
-      <p class="text-sm text-gray-600">What’s your name?</p>
-      <input type="text" id="nameInput" placeholder="Enter your name"
-             class="w-full border p-2 rounded" />
-      <button id="saveName"
-              class="w-full bg-pink-500 text-white py-2 rounded mt-2">
-        Save
-      </button>
+    <!-- Entries Display -->
+    <ul id="entriesList" class="list-disc ml-5 space-y-1 mb-4"></ul>
+
+    <!-- Footer Note -->
+    <div class="text-sm text-center p-3 bg-pink-100 rounded mt-4">
+      This app isn’t perfect — but it’s made with love for someone who is 💖
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Modal for Name Input (Shown only once) -->
+  <div id="nameModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded shadow-lg w-80 text-center">
+      <h2 class="text-lg font-semibold mb-2">Welcome 💖</h2>
+      <p class="mb-3">What’s your name?</p>
+      <input type="text" id="nameInput" class="border px-2 py-1 w-full mb-3 rounded" placeholder="Your name">
+      <button id="saveName" class="bg-pink-500 text-white w-full py-2 rounded hover:bg-pink-600">Save</button>
+    </div>
+  </div>
 </body>
 </html>
