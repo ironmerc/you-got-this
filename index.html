@@ -11,26 +11,21 @@
 <body class="bg-pink-50 text-gray-800 font-sans flex items-center justify-center min-h-screen">
   <div class="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
     
-    <!-- Title + Streak -->
     <h1 id="title" class="text-2xl font-bold text-center mb-1">You Got This 💖</h1>
     <p id="streakLine" class="text-center text-pink-600 font-semibold mb-4"></p>
 
-    <!-- Quote Carousel -->
     <p id="quoteBox" class="italic text-center text-gray-500 mb-4">Loading quote...</p>
 
-    <!-- Daily Surprise Note -->
     <div id="message" class="mb-4 p-3 bg-pink-100 rounded text-center text-sm font-medium text-pink-800">
       <p>Loading today's surprise note...</p>
     </div>
 
-    <!-- Mood & Weight Input -->
     <h2 class="font-semibold text-lg mb-1">Daily Tracker</h2>
     <div class="flex gap-2 mb-2">
       <input type="number" id="moodInput" min="1" max="10" placeholder="Mood (1–10)" class="border px-2 py-1 rounded flex-1">
       <input type="number" id="weightInput" placeholder="Weight (optional)" class="border px-2 py-1 rounded flex-1">
     </div>
 
-    <!-- Checklist -->
     <h2 class="font-semibold text-lg mb-2">Today's Checklist</h2>
     <div id="checklist" class="mb-4 space-y-2">
       <label class="block"><input type="checkbox" /> Drink 2 L Water</label>
@@ -39,27 +34,21 @@
       <label class="block"><input type="checkbox" /> Healthy Meals</label>
     </div>
 
-    <!-- Save Button -->
     <button id="saveEntry" class="bg-pink-500 text-white w-full py-2 rounded hover:bg-pink-600 mb-4">Save Entry</button>
 
-    <!-- Entries Display -->
     <ul id="entriesList" class="list-disc ml-5 space-y-1 mb-4"></ul>
 
-    <!-- Progress link -->
-   <div class="flex justify-center mb-4">
-  <a href="progress.html" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-full shadow hover:bg-blue-600 transition duration-200">
-    📈 View Progress
-  </a>
-</div>
+    <div class="flex justify-center mb-4">
+      <a href="progress.html" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-full shadow hover:bg-blue-600 transition duration-200">
+        📈 View Progress
+      </a>
+    </div>
 
-
-    <!-- Footer Note -->
     <div class="text-sm text-center p-3 bg-pink-100 rounded mt-4">
       This app isn’t perfect — but it’s made with love for someone who is 💖
     </div>
   </div>
 
-  <!-- Modal for Name Input -->
   <div id="nameModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
     <div class="bg-white p-6 rounded shadow-lg w-80 text-center">
       <h2 class="text-lg font-semibold mb-2">Welcome 💖</h2>
