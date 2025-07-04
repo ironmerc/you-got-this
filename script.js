@@ -1,7 +1,11 @@
+const herName = "Riya";
+
 const LoveNotes = [
-  "You light up my life.",
-  "Your dedication inspires me daily.",
-  "I’m so proud of your progress."
+  "Just a reminder: I'm in your corner, always.",
+  "No matter the progress — you’re already beautiful to me.",
+  "You’re doing better than you think, I’m so proud of you ❤️",
+  "The effort you put in every day makes me love you even more.",
+  "This app isn’t perfect — but it’s made with love for someone who is."
 ];
 
 async function loadQuote() {
@@ -77,9 +81,15 @@ function renderEntries() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.querySelector("#title").textContent = `You Got This, ${herName} 💖`;
   loadQuote();
   loadLoveNote();
   renderEntries();
+
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('opacity-0');
+    setTimeout(() => document.getElementById('splash').remove(), 500);
+  }, 1800);
 });
 
 document.getElementById('saveEntry').addEventListener('click', saveEntry);

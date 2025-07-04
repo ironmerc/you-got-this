@@ -6,10 +6,20 @@
   <link rel="manifest" href="manifest.json" />
   <script src="https://cdn.tailwindcss.com"></script>
   <title>You Got This 💪</title>
+  <style>
+    #splash {
+      transition: opacity 0.5s ease-in-out;
+    }
+  </style>
 </head>
 <body class="bg-pink-50 text-gray-800 p-4">
+  <!-- Splash screen -->
+  <div id="splash" class="fixed inset-0 bg-pink-200 flex items-center justify-center text-3xl font-bold z-50">
+    Hey Riya 💕
+  </div>
+
   <div class="max-w-md mx-auto bg-white rounded-xl shadow-md p-6 space-y-6">
-    <h1 class="text-2xl font-bold text-center">You Got This 💖</h1>
+    <h1 id="title" class="text-2xl font-bold text-center">You Got This 💖</h1>
 
     <section id="quote" class="italic text-center text-lg text-gray-600">
       <p>Loading quote...</p>
@@ -29,14 +39,14 @@
     <section id="checklist" class="space-y-2">
       <h2 class="font-semibold">Today's Checklist</h2>
       <ul class="list-none space-y-1">
-        <li><label><input type="checkbox"> Drink 2 L Water</label></li>
+        <li><label><input type="checkbox"> Drink 2L Water</label></li>
         <li><label><input type="checkbox"> Walk 30 min</label></li>
         <li><label><input type="checkbox"> 8 hr Sleep</label></li>
         <li><label><input type="checkbox"> Healthy Meals</label></li>
       </ul>
     </section>
 
-    <section id="message" class="p-4 bg-pink-100 rounded text-center">
+    <section id="message" class="p-4 bg-pink-100 rounded text-center font-semibold text-lg">
       <p>Loading note...</p>
     </section>
   </div>
