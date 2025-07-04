@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>You Got This 💪</title>
+</head>
+<body class="bg-pink-50 text-gray-800 p-4">
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow-md p-6 space-y-6">
+    <h1 class="text-2xl font-bold text-center">You Got This 💖</h1>
+
+    <section id="quote" class="italic text-center text-lg text-gray-600">
+      <p>Loading quote...</p>
+    </section>
+
+    <section id="tracker" class="space-y-2">
+      <h2 class="font-semibold">Weekly Tracker</h2>
+      <input id="entryInput" type="number" placeholder="Weight (kg) or Mood (1–10)"
+             class="w-full p-2 border rounded" />
+      <button id="saveEntry"
+              class="w-full bg-pink-500 text-white p-2 rounded">
+        Save Entry
+      </button>
+      <ul id="entriesList" class="list-disc ml-5 space-y-1"></ul>
+    </section>
+
+    <section id="checklist" class="space-y-2">
+      <h2 class="font-semibold">Today's Checklist</h2>
+      <ul class="list-none space-y-1">
+        <li><label><input type="checkbox"> Drink 2 L Water</label></li>
+        <li><label><input type="checkbox"> Walk 30 min</label></li>
+        <li><label><input type="checkbox"> 8 hr Sleep</label></li>
+        <li><label><input type="checkbox"> Healthy Meals</label></li>
+      </ul>
+    </section>
+
+    <section id="message" class="p-4 bg-pink-100 rounded text-center">
+      <p>Loading note...</p>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
