@@ -7,19 +7,21 @@ const LoveNotes = [
 ];
 
 function loadName() {
-  let herName = localStorage.getItem("herName");
+  const modal = document.getElementById("nameModal");
+  const herName = localStorage.getItem("herName");
+
   if (!herName) {
-    document.getElementById("nameModal").style.display = "flex";
+    modal.classList.remove("hidden"); // ✅ Show modal
     document.getElementById("saveName").addEventListener("click", () => {
       const name = document.getElementById("nameInput").value.trim();
       if (name) {
         localStorage.setItem("herName", name);
-        document.getElementById("nameModal").style.display = "none";
+        modal.classList.add("hidden"); // ✅ Hide modal
         document.getElementById("title").textContent = `You Got This, ${name} 💖`;
       }
     });
   } else {
-    document.getElementById("nameModal").style.display = "none";
+    modal.classList.add("hidden"); // ✅ Just in case
     document.getElementById("title").textContent = `You Got This, ${herName} 💖`;
   }
 }
