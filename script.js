@@ -8,23 +8,30 @@ const LoveNotes = [
 
 function loadName() {
   const modal = document.getElementById("nameModal");
-  const herName = localStorage.getItem("herName");
+  if (!modal) {
+    console.error("Modal not found in DOM.");
+    return;
+  }
 
+  const herName = localStorage.getItem("herName");
   if (!herName) {
-    modal.classList.remove("hidden"); // ✅ Show modal
+    console.log("No name found – showing modal.");
+    modal.classList.remove("hidden");
     document.getElementById("saveName").addEventListener("click", () => {
       const name = document.getElementById("nameInput").value.trim();
       if (name) {
         localStorage.setItem("herName", name);
-        modal.classList.add("hidden"); // ✅ Hide modal
+        modal.classList.add("hidden");
         document.getElementById("title").textContent = `You Got This, ${name} 💖`;
       }
     });
   } else {
-    modal.classList.add("hidden"); // ✅ Just in case
+    console.log("Name already saved – hiding modal.");
+    modal.classList.add("hidden");
     document.getElementById("title").textContent = `You Got This, ${herName} 💖`;
   }
 }
+
 
 async function loadQuote() {
   const stored = JSON.parse(localStorage.getItem('todayQuote') || '{}');
