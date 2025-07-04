@@ -1,5 +1,3 @@
-const herName = "Riya";
-
 const LoveNotes = [
   "Just a reminder: I'm in your corner, always.",
   "No matter the progress — you’re already beautiful to me.",
@@ -7,6 +5,24 @@ const LoveNotes = [
   "The effort you put in every day makes me love you even more.",
   "This app isn’t perfect — but it’s made with love for someone who is."
 ];
+
+function loadName() {
+  let herName = localStorage.getItem("herName");
+  if (!herName) {
+    document.getElementById("nameModal").style.display = "flex";
+    document.getElementById("saveName").addEventListener("click", () => {
+      const name = document.getElementById("nameInput").value.trim();
+      if (name) {
+        localStorage.setItem("herName", name);
+        document.getElementById("nameModal").style.display = "none";
+        document.getElementById("title").textContent = `You Got This, ${name} 💖`;
+      }
+    });
+  } else {
+    document.getElementById("nameModal").style.display = "none";
+    document.getElementById("title").textContent = `You Got This, ${herName} 💖`;
+  }
+}
 
 async function loadQuote() {
   const stored = JSON.parse(localStorage.getItem('todayQuote') || '{}');
@@ -81,15 +97,10 @@ function renderEntries() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelector("#title").textContent = `You Got This, ${herName} 💖`;
+  loadName();
   loadQuote();
   loadLoveNote();
   renderEntries();
-
-  setTimeout(() => {
-    document.getElementById('splash').classList.add('opacity-0');
-    setTimeout(() => document.getElementById('splash').remove(), 500);
-  }, 1800);
 });
 
 document.getElementById('saveEntry').addEventListener('click', saveEntry);
