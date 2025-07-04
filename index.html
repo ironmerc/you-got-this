@@ -11,9 +11,10 @@
 <body class="bg-pink-50 text-gray-800 font-sans flex items-center justify-center min-h-screen">
   <div class="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
     
-    <!-- Personalized Title -->
-    <h1 id="title" class="text-2xl font-bold text-center mb-2">You Got This 💖</h1>
-    
+    <!-- Title + Streak -->
+    <h1 id="title" class="text-2xl font-bold text-center mb-1">You Got This 💖</h1>
+    <p id="streakLine" class="text-center text-pink-600 font-semibold mb-4"></p>
+
     <!-- Quote Carousel -->
     <p id="quoteBox" class="italic text-center text-gray-500 mb-4">Loading quote...</p>
 
@@ -44,13 +45,21 @@
     <!-- Entries Display -->
     <ul id="entriesList" class="list-disc ml-5 space-y-1 mb-4"></ul>
 
+    <!-- Progress link -->
+   <div class="flex justify-center mb-4">
+  <a href="progress.html" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-full shadow hover:bg-blue-600 transition duration-200">
+    📈 View Progress
+  </a>
+</div>
+
+
     <!-- Footer Note -->
     <div class="text-sm text-center p-3 bg-pink-100 rounded mt-4">
       This app isn’t perfect — but it’s made with love for someone who is 💖
     </div>
   </div>
 
-  <!-- Modal for Name Input (Shown only once) -->
+  <!-- Modal for Name Input -->
   <div id="nameModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
     <div class="bg-white p-6 rounded shadow-lg w-80 text-center">
       <h2 class="text-lg font-semibold mb-2">Welcome 💖</h2>

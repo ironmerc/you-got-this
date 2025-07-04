@@ -18,18 +18,15 @@ function saveEntry() {
     return;
   }
 
-  // Save mood
   const moods = JSON.parse(localStorage.getItem('moodEntries') || '{}');
   moods[`mood_${today}`] = mood;
   localStorage.setItem('moodEntries', JSON.stringify(moods));
 
-  // Confetti once per day
   if (shouldShowConfetti()) {
     launchConfetti();
     markConfettiShown();
   }
 
-  // Save weight if entered
   if (weightVal) {
     const weight = parseFloat(weightVal);
     if (!isNaN(weight)) {
@@ -39,7 +36,6 @@ function saveEntry() {
     }
   }
 
-  // Save checklist
   const checklistStates = Array.from(document.querySelectorAll('#checklist input[type="checkbox"]')).map(cb => cb.checked);
   localStorage.setItem(`checklist_${today}`, JSON.stringify(checklistStates));
 
@@ -47,6 +43,7 @@ function saveEntry() {
   document.getElementById('weightInput').value = '';
 
   renderEntries();
+  updateStreak();
 }
 
 function renderEntries() {
@@ -164,12 +161,32 @@ function loadName() {
   }
 }
 
+function updateStreak() {
+  const moods = JSON.parse(localStorage.getItem('moodEntries') || '{}');
+  const today = getToday();
+
+  let streak = 0;
+  let day = new Date(today);
+
+  while (true) {
+    const dateStr = day.toISOString().split('T')[0];
+    if (moods[`mood_${dateStr}`] !== undefined) {
+      streak++;
+      day.setDate(day.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+
+  document.getElementById("streakLine").textContent = streak > 0 ? `🔥 ${streak}-day streak! Keep it up!` : "";
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadName();
   rotateQuotes();
   loadLoveNote();
   renderEntries();
   loadChecklist();
-
+  updateStreak();
   document.getElementById('saveEntry').addEventListener('click', saveEntry);
 });
