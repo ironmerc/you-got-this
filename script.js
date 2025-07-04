@@ -132,15 +132,40 @@ function showNote(note) {
   document.querySelector('#message p').textContent = note;
 }
 
+// ✅ Checklist Save/Load
+function getTodayKey() {
+  return 'checklist_' + new Date().toISOString().split('T')[0];
+}
+
+function saveChecklist() {
+  const checkboxes = document.querySelectorAll('#checklist input[type="checkbox"]');
+  const states = Array.from(checkboxes).map(cb => cb.checked);
+  localStorage.setItem(getTodayKey(), JSON.stringify(states));
+}
+
+function loadChecklist() {
+  const data = JSON.parse(localStorage.getItem(getTodayKey()) || '[]');
+  const checkboxes = document.querySelectorAll('#checklist input[type="checkbox"]');
+  checkboxes.forEach((cb, i) => {
+    cb.checked = data[i] || false;
+  });
+}
+
 // 🚀 INIT
 document.addEventListener('DOMContentLoaded', () => {
   loadName();
   rotateQuotes();
   loadLoveNote();
   renderEntries();
+  loadChecklist(); // ✅ load saved checklist
 
   const btn = document.getElementById('saveEntry');
   if (btn) {
     btn.addEventListener('click', saveEntry);
   }
+
+  // ✅ Track changes to checklist
+  document.querySelectorAll('#checklist input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', saveChecklist);
+  });
 });
