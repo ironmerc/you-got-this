@@ -6,19 +6,41 @@
   <title>You Got This 💖</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    .glow {
+      animation: softGlow 2s infinite alternate;
+    }
+    @keyframes softGlow {
+      from { background-color: #ffe4e6; }
+      to { background-color: #ffeef3; }
+    }
+  </style>
   <script defer src="script.js"></script>
 </head>
-<body class="bg-pink-50 text-gray-800 font-sans flex items-center justify-center min-h-screen">
+<body id="appBody" class="bg-pink-50 text-gray-800 font-sans flex items-center justify-center min-h-screen">
   <div class="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
     
     <h1 id="title" class="text-2xl font-bold text-center mb-1">You Got This 💖</h1>
     <p id="streakLine" class="text-center text-pink-600 font-semibold mb-4"></p>
 
-    <p id="quoteBox" class="italic text-center text-gray-500 mb-4">Loading quote...</p>
-
-    <div id="message" class="mb-4 p-3 bg-pink-100 rounded text-center text-sm font-medium text-pink-800">
-      <p>Loading today's surprise note...</p>
+    <!-- Comfort Mode Section -->
+    <div class="flex justify-center mb-4">
+      <label class="inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="modeToggle" class="sr-only peer">
+        <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-pink-500 transition"></div>
+        <span class="ml-3 text-sm font-medium text-gray-700">Comfort Mode</span>
+      </label>
     </div>
+    <!-- Hidden Comfort Box -->
+    <div id="comfortBox" class="hidden text-center p-4 rounded-lg bg-pink-100 text-pink-800 mb-4 space-y-2">
+      <p class="italic text-sm">I am there for you my baby girl, call me text me rn if you need me.</p>
+      <div class="flex justify-center gap-4">
+        <button class="text-pink-700 font-semibold text-sm underline">📱 Text Me</button>
+        <button class="text-pink-700 font-semibold text-sm underline">📞 Call Me</button>
+      </div>
+    </div>
+
+    <p id="quoteBox" class="italic text-center text-gray-500 mb-4">Loading quote...</p>
 
     <h2 class="font-semibold text-lg mb-1">Daily Tracker</h2>
     <div class="flex gap-2 mb-2">

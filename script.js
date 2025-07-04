@@ -1,192 +1,205 @@
+const checklistItems = ["Water", "Walk", "Sleep", "Meals"];
+const quotes = [
+  "You are stronger than you think.",
+  "Progress, not perfection.",
+  "You’re doing amazing 💖",
+  "Every small step counts.",
+  "I’m proud of you today, too.",
+];
+
 function getToday() {
   return new Date().toISOString().split('T')[0];
 }
 
+function rotateQuotes() {
+  const quoteBox = document.getElementById("quoteBox");
+  if (!quoteBox) return;
+  const rand = quotes[Math.floor(Math.random() * quotes.length)];
+  quoteBox.textContent = rand;
+}
+
+function loadName() {
+  const name = localStorage.getItem("userName");
+  if (!name) {
+    document.getElementById("nameModal").classList.remove("hidden");
+    document.getElementById("saveName").onclick = () => {
+      const nameInput = document.getElementById("nameInput").value.trim();
+      if (nameInput) {
+        localStorage.setItem("userName", nameInput);
+        document.getElementById("nameModal").classList.add("hidden");
+        location.reload();
+      }
+    };
+  } else {
+    document.getElementById("title").innerText = `You Got This, ${name} 💖`;
+  }
+}
+
+function loadChecklist() {
+  const data = JSON.parse(localStorage.getItem("checklist") || "{}");
+  const today = getToday();
+  const saved = data[today] || [];
+  const checklist = document.getElementById("checklist").querySelectorAll("input[type='checkbox']");
+  checklist.forEach((box, i) => {
+    box.checked = saved.includes(i);
+  });
+}
+
+function saveChecklist() {
+  const checklist = document.getElementById("checklist").querySelectorAll("input[type='checkbox']");
+  const data = JSON.parse(localStorage.getItem("checklist") || "{}");
+  const today = getToday();
+  data[today] = [];
+  checklist.forEach((box, i) => {
+    if (box.checked) data[today].push(i);
+  });
+  localStorage.setItem("checklist", JSON.stringify(data));
+}
+
+function updateStreak() {
+  const moods = JSON.parse(localStorage.getItem("moodEntries") || "{}");
+  let streak = 0;
+  let day = new Date(getToday());
+  while (true) {
+    const key = day.toISOString().split("T")[0];
+    if (moods[`mood_${key}`] !== undefined) {
+      streak++;
+      day.setDate(day.getDate() - 1);
+    } else break;
+  }
+  document.getElementById("streakLine").textContent = `🔥 ${streak}-day streak`;
+}
+
+function confetti() {
+  window.confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 },
+  });
+}
+
 function saveEntry() {
-  const moodVal = document.getElementById('moodInput').value.trim();
-  const weightVal = document.getElementById('weightInput').value.trim();
+  const mood = parseInt(document.getElementById("moodInput").value);
+  const weight = parseFloat(document.getElementById("weightInput").value);
   const today = getToday();
 
-  if (!moodVal) {
-    alert("Mood is required.");
+  if (isNaN(mood) || mood < 1 || mood > 10) {
+    alert("Please enter a mood between 1 and 10 💖");
     return;
   }
 
-  const mood = parseInt(moodVal);
-  if (mood < 1 || mood > 10) {
-    alert("Mood must be between 1 and 10 🧠");
-    return;
-  }
+  const moods = JSON.parse(localStorage.getItem("moodEntries") || "{}");
+  const weights = JSON.parse(localStorage.getItem("weightEntries") || "{}");
 
-  const moods = JSON.parse(localStorage.getItem('moodEntries') || '{}');
   moods[`mood_${today}`] = mood;
-  localStorage.setItem('moodEntries', JSON.stringify(moods));
+  if (!isNaN(weight)) weights[`weight_${today}`] = weight;
 
-  if (shouldShowConfetti()) {
-    launchConfetti();
-    markConfettiShown();
-  }
+  localStorage.setItem("moodEntries", JSON.stringify(moods));
+  localStorage.setItem("weightEntries", JSON.stringify(weights));
 
-  if (weightVal) {
-    const weight = parseFloat(weightVal);
-    if (!isNaN(weight)) {
-      const weights = JSON.parse(localStorage.getItem('weightEntries') || '{}');
-      weights[`weight_${today}`] = weight;
-      localStorage.setItem('weightEntries', JSON.stringify(weights));
-    }
-  }
-
-  const checklistStates = Array.from(document.querySelectorAll('#checklist input[type="checkbox"]')).map(cb => cb.checked);
-  localStorage.setItem(`checklist_${today}`, JSON.stringify(checklistStates));
-
-  document.getElementById('moodInput').value = '';
-  document.getElementById('weightInput').value = '';
-
+  saveChecklist();
   renderEntries();
   updateStreak();
+  checkAndAwardBadges();
+  confetti();
+
+  document.getElementById("moodInput").value = "";
+  document.getElementById("weightInput").value = "";
 }
 
 function renderEntries() {
-  const list = document.getElementById('entriesList');
-  list.innerHTML = '';
+  const moodData = JSON.parse(localStorage.getItem("moodEntries") || "{}");
+  const weightData = JSON.parse(localStorage.getItem("weightEntries") || "{}");
+  const checklistData = JSON.parse(localStorage.getItem("checklist") || "{}");
 
-  const moodData = JSON.parse(localStorage.getItem('moodEntries') || '{}');
-  const weightData = JSON.parse(localStorage.getItem('weightEntries') || '{}');
+  const today = getToday();
+  const list = document.getElementById("entriesList");
+  list.innerHTML = "";
 
-  const allDates = new Set([
-    ...Object.keys(moodData).map(k => k.replace('mood_', '')),
-    ...Object.keys(weightData).map(k => k.replace('weight_', ''))
-  ]);
+  if (moodData[`mood_${today}`] !== undefined) {
+    list.innerHTML += `<li>🧠 Mood: ${moodData[`mood_${today}`]}</li>`;
+  }
 
-  const moodEmoji = (m) => {
-    if (m >= 9) return '😄';
-    if (m >= 7) return '😊';
-    if (m >= 5) return '😐';
-    if (m >= 3) return '😞';
-    return '😢';
-  };
+  if (weightData[`weight_${today}`] !== undefined) {
+    list.innerHTML += `<li>⚖️ Weight: ${weightData[`weight_${today}`]} kg</li>`;
+  }
 
-  [...allDates].sort().reverse().forEach(date => {
-    const mood = moodData[`mood_${date}`];
-    const weight = weightData[`weight_${date}`];
+  if (checklistData[today]) {
+    const completed = checklistData[today].map(i => checklistItems[i]).join(", ");
+    list.innerHTML += `<li>✅ Checklist: ${completed}</li>`;
+  }
+}
 
-    if (mood !== undefined) {
-      const liMood = document.createElement('li');
-      liMood.textContent = `${date} - ${moodEmoji(mood)} Mood: ${mood}/10`;
-      list.appendChild(liMood);
-    }
+// 🎖 Badge System
+function awardBadge(key, emoji) {
+  const badges = JSON.parse(localStorage.getItem("badges") || "[]");
+  if (!badges.includes(key)) {
+    badges.push(key);
+    localStorage.setItem("badges", JSON.stringify(badges));
+  }
+}
 
-    if (weight !== undefined) {
-      const liWeight = document.createElement('li');
-      liWeight.textContent = `${date} - ⚖️ Weight: ${weight} kg`;
-      list.appendChild(liWeight);
+function checkAndAwardBadges() {
+  const moods = JSON.parse(localStorage.getItem("moodEntries") || "{}");
+  const weights = JSON.parse(localStorage.getItem("weightEntries") || "{}");
+
+  const moodDates = Object.keys(moods);
+  const weightDates = Object.keys(weights);
+
+  if (moodDates.length >= 1) awardBadge("firstMood", "🌟");
+  if (moodDates.length >= 10) awardBadge("10moods", "🧠");
+  if (weightDates.length >= 1) awardBadge("firstWeight", "⚖️");
+
+  let streak = 0;
+  let day = new Date(getToday());
+  while (true) {
+    const dateStr = day.toISOString().split("T")[0];
+    if (moods[`mood_${dateStr}`] !== undefined) {
+      streak++;
+      day.setDate(day.getDate() - 1);
+    } else break;
+  }
+
+  if (streak >= 3) awardBadge("streak3", "🐥");
+  if (streak >= 7) awardBadge("streak7", "🔥");
+}
+
+// 🧠 Comfort Mode Toggle
+function loadModeToggle() {
+  const toggle = document.getElementById("modeToggle");
+  const body = document.getElementById("appBody");
+  const comfortBox = document.getElementById("comfortBox");
+
+  const savedMode = localStorage.getItem("comfortMode") === "on";
+  toggle.checked = savedMode;
+
+  if (savedMode) {
+    body.classList.add("glow");
+    comfortBox.classList.remove("hidden");
+  }
+
+  toggle.addEventListener("change", () => {
+    if (toggle.checked) {
+      localStorage.setItem("comfortMode", "on");
+      body.classList.add("glow");
+      comfortBox.classList.remove("hidden");
+    } else {
+      localStorage.removeItem("comfortMode");
+      body.classList.remove("glow");
+      comfortBox.classList.add("hidden");
     }
   });
 }
 
-function shouldShowConfetti() {
-  return localStorage.getItem("confettiShown") !== getToday();
-}
-function markConfettiShown() {
-  localStorage.setItem("confettiShown", getToday());
-}
-function launchConfetti() {
-  const end = Date.now() + 1500;
-  (function frame() {
-    confetti({ particleCount: 20, spread: 70, origin: { y: 0.6 } });
-    if (Date.now() < end) requestAnimationFrame(frame);
-  })();
-}
 
-function rotateQuotes() {
-  const quotes = [
-    "Progress, not perfection 💪",
-    "You are becoming stronger every day 💖",
-    "Trust the process, it's working ✨",
-    "Be proud of yourself today 🌸",
-    "You’re doing better than you think 💫",
-  ];
-  const box = document.getElementById("quoteBox");
-  let i = 0;
-  box.textContent = quotes[i];
-  setInterval(() => {
-    i = (i + 1) % quotes.length;
-    box.textContent = quotes[i];
-  }, 6000);
-}
-
-function loadLoveNote() {
-  const notes = [
-    "I believe in you — always.",
-    "You’re already beautiful to me.",
-    "Each small step is a win ❤️",
-    "Made with love, for someone who deserves it."
-  ];
-  const today = getToday();
-  const stored = JSON.parse(localStorage.getItem('todayNote') || '{}');
-  if (stored.date === today) {
-    showNote(stored.note);
-  } else {
-    const note = notes[Math.floor(Math.random() * notes.length)];
-    localStorage.setItem('todayNote', JSON.stringify({ date: today, note }));
-    showNote(note);
-  }
-}
-function showNote(note) {
-  document.querySelector('#message p').textContent = note;
-}
-
-function loadChecklist() {
-  const today = getToday();
-  const states = JSON.parse(localStorage.getItem(`checklist_${today}`) || '[]');
-  const checkboxes = document.querySelectorAll('#checklist input[type="checkbox"]');
-  checkboxes.forEach((cb, i) => cb.checked = states[i] || false);
-}
-
-function loadName() {
-  const modal = document.getElementById("nameModal");
-  const herName = localStorage.getItem("herName");
-  if (!herName) {
-    modal.classList.remove("hidden");
-    document.getElementById("saveName").addEventListener("click", () => {
-      const name = document.getElementById("nameInput").value.trim();
-      if (name) {
-        localStorage.setItem("herName", name);
-        modal.classList.add("hidden");
-        document.getElementById("title").textContent = `You Got This, ${name} 💖`;
-      }
-    });
-  } else {
-    document.getElementById("title").textContent = `You Got This, ${herName} 💖`;
-  }
-}
-
-function updateStreak() {
-  const moods = JSON.parse(localStorage.getItem('moodEntries') || '{}');
-  const today = getToday();
-
-  let streak = 0;
-  let day = new Date(today);
-
-  while (true) {
-    const dateStr = day.toISOString().split('T')[0];
-    if (moods[`mood_${dateStr}`] !== undefined) {
-      streak++;
-      day.setDate(day.getDate() - 1);
-    } else {
-      break;
-    }
-  }
-
-  document.getElementById("streakLine").textContent = streak > 0 ? `🔥 ${streak}-day streak! Keep it up!` : "";
-}
-
+// 🔄 Init on page load
 document.addEventListener('DOMContentLoaded', () => {
   loadName();
   rotateQuotes();
-  loadLoveNote();
   renderEntries();
   loadChecklist();
   updateStreak();
+  checkAndAwardBadges();
+  loadModeToggle();
   document.getElementById('saveEntry').addEventListener('click', saveEntry);
 });
